@@ -1,0 +1,60 @@
+#slider:after
+{
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+.slides
+{
+    display: none;
+}
+
+.slider-panes
+{
+    position: relative;
+    float: left;
+    overflow: hidden;
+}
+
+.slider-panes .slider-second-pane
+{
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.slider-caption
+{
+    position: absolute;
+    left: 0;
+    bottom: -5em;
+    width: 100%;
+}
+
+.slider-caption .slider-background,
+.slider-caption .slider-description
+{
+    height: 1em;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 1em 1em;
+}
+
+.slider-caption .slider-background
+{
+    z-index: 10;
+    background: white;
+    opacity: 0.9;
+    width: 100%;
+}
+
+.slider-caption .slider-description
+{
+    z-index: 20;
+    color: black;
+    opacity: 1;
+}
