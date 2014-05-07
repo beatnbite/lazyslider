@@ -20,6 +20,7 @@ jQuery(document).ready(function($) {
     // Init banners
     $('.slides .slide').each(function (index) {
         var slide = $(this);
+        var link = slide.data('link');
         banners[index] = {
             url: slide.data('src'),
             width: slide.data('width'),
@@ -27,6 +28,9 @@ jQuery(document).ready(function($) {
             alt: $.trim(slide.text()),
             slide: slide
         };
+        if (link) {
+            banners[index].link = link;
+        }
         total++;
     });
 
@@ -53,8 +57,10 @@ jQuery(document).ready(function($) {
     });
 
     var renderSlide = function(index) {
+
         var banner = banners[index];
-        return '<img src="'
+
+        var imageHtml = '<img src="'
             + banner.url
             + '" width="'
             + banner.width
@@ -63,10 +69,13 @@ jQuery(document).ready(function($) {
             + '" alt="'
             + banner.alt
             + '" />';
+
+        return ('link' in banner) ? '<a href="' + banner.link + '">' + imageHtml + '</a>' : imageHtml;
+
     };
 
     var prepareStep = function() {
-        $('.slider-first-pane img', slider).remove();
+        $('.slider-first-pane a, .slider-first-pane img', slider).remove();
         $('.slider-first-pane', slider).append(renderSlide(currentIndex));
         $('.slider-first-pane', slider).show();
 
@@ -76,7 +85,7 @@ jQuery(document).ready(function($) {
         }
 
         $('.slider-second-pane', slider).hide();
-        $('.slider-second-pane img', slider).remove();
+        $('.slider-second-pane a, .slider-second-pane img', slider).remove();
         $('.slider-second-pane', slider).append(renderSlide(currentIndex));
     };
 

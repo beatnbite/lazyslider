@@ -9,9 +9,9 @@ $slides = array(
 
     'banner-florence-bridge' => 'Slider #4 desciption',
     'banner-spain-castle' => 'Slider #5 desciption',
-    'banner-spain-chapel' => 'Slider #6 desciption',
+    'banner-spain-chapel' => array('Slider #6 desciption', 'http://www.golftur.ru/trips/spain-catalonia-costa-del-maresme-callela.html'),
     'banner-spain-park-lake' => 'Slider #7 desciption',
-    'banner-spain-shambala' => 'Slider #8 desciption',
+    'banner-spain-shambala' => array('Slider #8 desciption', 'http://www.golftur.ru/trips/spain-tarragona-salou-PortAventura-theme-park.html'),
     'banner-switzerland-alps' => 'Slider #9 desciption',
     'banner-turkey-kaleici' => 'Slider #10 desciption',
     'banner-uae-al-mamzar' => 'Slider #11 desciption',
@@ -24,10 +24,17 @@ $slides = array(
 
 $banners = array();
 
-foreach ($slides as $slide => $description) {
+foreach ($slides as $slide => $info) {
+
+    $banner = array();
+
+    if (is_array($info)) {
+        list($banner['description'], $banner['link']) = $info;
+    } else {
+        $banner['description'] = $info;
+    }
 
     $banner['url'] = $banner['path'] = "img/$slide.jpg";
-    $banner['description'] = $description;
 
     if (is_readable($banner['path'])) {
 
