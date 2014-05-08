@@ -1,3 +1,14 @@
+/*
+ * Lazy Slider v0.1
+ * https://github.com/beatnbite/lazyslider
+ *
+ * Copyright 2014, Vyacheslav Petrov
+ *
+ * Free for non-commercial use.
+ * A license fee is required for commercial use.
+ * Please refer to LICENSE file for details.
+ */
+
 #slider:after
 {
     content: ".";
@@ -47,14 +58,10 @@
 .slider-caption .slider-background
 {
     z-index: 10;
-    background: white;
-    opacity: 0.9;
     width: 100%;
 }
 
 .slider-caption .slider-description
 {
     z-index: 20;
-    color: black;
-    opacity: 1;
 }

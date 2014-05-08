@@ -1,0 +1,11 @@
+.slider-caption .slider-background
+{
+    background: white;
+    opacity: 0.9;
+}
+
+.slider-caption .slider-description
+{
+    z-index: 20;
+    color: black;
+}

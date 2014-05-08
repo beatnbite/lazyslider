@@ -1,10 +1,19 @@
-
+/*
+ * Lazy Slider v0.1
+ * https://github.com/beatnbite/lazyslider
+ *
+ * Copyright 2014, Vyacheslav Petrov
+ *
+ * Free for non-commercial use.
+ * A license fee is required for commercial use.
+ * Please refer to LICENSE file for details.
+ */
 
 jQuery(document).ready(function($) {
 
     var settings = {
         animationSpeed: 700,
-        animationDelay: 6000,
+        animationDelay: 5000,
         easingOut: 'swing',
         easingIn:  'swing',
         captionAnimationSpeed: 250,
