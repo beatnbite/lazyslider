@@ -86,6 +86,18 @@ foreach ($slides as $slide => $info) {
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script type="text/javascript" src="../lazyslider/js/lazyslider.js"></script>
 
+        <script type="text/javascript">
+            jQuery(window).load(function() {
+                var options = {
+                    animationSpeed: 700,
+                    animationDelay: 5000,
+                    captionAnimationSpeed: 250,
+                    captionAnimationDelay: 600
+                };
+                jQuery('#slider').lazySlider(options);
+            });
+        </script>
+
     </body>
 
 </html>

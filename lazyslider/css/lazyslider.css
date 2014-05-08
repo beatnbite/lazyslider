@@ -9,7 +9,7 @@
  * Please refer to LICENSE file for details.
  */
 
-#slider:after
+.lazyslider:after
 {
     content: ".";
     display: block;
@@ -23,21 +23,21 @@
     display: none;
 }
 
-.slider-panes
+.lazyslider-panes
 {
     position: relative;
     float: left;
     overflow: hidden;
 }
 
-.slider-panes .slider-second-pane
+.lazyslider-second-pane
 {
     position: absolute;
     left: 0;
     top: 0;
 }
 
-.slider-caption
+.lazyslider-caption
 {
     position: absolute;
     left: 0;
@@ -45,8 +45,8 @@
     width: 100%;
 }
 
-.slider-caption .slider-background,
-.slider-caption .slider-description
+.lazyslider-background,
+.lazyslider-description
 {
     height: 1em;
     position: absolute;
@@ -55,13 +55,13 @@
     padding: 1em 1em;
 }
 
-.slider-caption .slider-background
+.lazyslider-background
 {
     z-index: 10;
     width: 100%;
 }
 
-.slider-caption .slider-description
+.lazyslider-description
 {
     z-index: 20;
 }

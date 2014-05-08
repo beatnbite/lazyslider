@@ -11,109 +11,222 @@
 
 jQuery(document).ready(function($) {
 
-    var settings = {
-        animationSpeed: 700,
-        animationDelay: 5000,
-        easingOut: 'swing',
-        easingIn:  'swing',
-        captionAnimationSpeed: 250,
-        captionAnimationDelay: 600
-    };
+    /**
+     * Instantiates and runs the lazy slider on the element matching the specified selector.
+     *
+     * @param selector jQuery selector to match the slider element on the page.
+     * @param options  Slider options.
+     *
+     * @constructor
+     */
+    var LazySlider = function(selector, options) {
 
-    var banners = [],
-        total = 0,
-        currentIndex = 0,
-        slider = $('#slider'),
-        current;
-
-    // Init banners
-    $('.slides .slide').each(function (index) {
-        var slide = $(this);
-        var link = slide.data('link');
-        banners[index] = {
-            url: slide.data('src'),
-            width: slide.data('width'),
-            height: slide.data('height'),
-            alt: $.trim(slide.text()),
-            slide: slide
+        /**
+         * Slider settings.
+         *
+         * @type object
+         */
+        var settings = {
+            animationSpeed: 700,
+            animationDelay: 5000,
+            easingOut: 'swing',
+            easingIn: 'swing',
+            captionAnimationSpeed: 250,
+            captionAnimationDelay: 600
         };
-        if (link) {
-            banners[index].link = link;
-        }
-        total++;
-    });
+        $.extend(settings, options);
 
-    // Init slider
-    slider.append('<div class="slider-panes">'
-        + '<div class="slider-first-pane slider-pane"></div>'
-        + '<div class="slider-second-pane slider-pane"></div>'
-        + '<div class="slider-caption"><div class="slider-background"></div><div class="slider-description"></div></div>'
-        + '</div>');
+        /**
+         * The slider element.
+         *
+         * @type jQuery
+         */
+        var slider = $(selector);
 
-    // Init caption
-    var caption = $('.slider-caption', slider);
-    var panes = $('.slider-panes', slider);
-    panes.hover(function() {
-        clearTimeout(panes.t);
-        caption.stop().animate({bottom: 0}, settings.captionAnimationSpeed);
-    }, function() {
-        panes.t = setTimeout((function() {
-            var height = $('.slider-description', caption).outerHeight();
-            caption.stop().animate({
-                bottom: "-" + height + "px"
-            }, settings.captionAnimationSpeed)
-        }), settings.captionAnimationDelay);
-    });
+        /**
+         * Information on slides.
+         *
+         * @type Array
+         */
+        var slides = [];
 
-    var renderSlide = function(index) {
+        /**
+         * The total number of slides.
+         *
+         * @type number
+         */
+        var total = 0;
 
-        var banner = banners[index];
+        /**
+         * Index of the current slide.
+         *
+         * @type number
+         */
+        var currentIndex = 0;
 
-        var imageHtml = '<img src="'
-            + banner.url
-            + '" width="'
-            + banner.width
-            + '" height="'
-            + banner.height
-            + '" alt="'
-            + banner.alt
-            + '" />';
+        /**
+         * The current slide element.
+         *
+         * @type jQuery
+         */
+        var current;
 
-        return ('link' in banner) ? '<a href="' + banner.link + '">' + imageHtml + '</a>' : imageHtml;
+        /**
+         * Start the animation.
+         */
+        this.run = function () {
+
+            // Init the slider
+
+            init();
+
+            // Start the caption animation
+
+            var caption = $('.lazyslider-caption', slider);
+            var panes = $('.lazyslider-panes', slider);
+
+            panes.hover(function () {
+
+                clearTimeout(panes.t);
+                caption.stop().animate({bottom: 0}, settings.captionAnimationSpeed);
+
+            }, function () {
+
+                panes.t = setTimeout((function () {
+                    var height = $('.lazyslider-description', caption).outerHeight();
+                    caption.stop().animate({
+                        bottom: "-" + height + "px"
+                    }, settings.captionAnimationSpeed)
+                }), settings.captionAnimationDelay);
+
+            });
+
+            // Update the caption with the first slide description
+
+            updateCaption();
+
+            // Show the first slide and run the animation
+
+            schedule();
+        };
+
+        /**
+         * Init the slider.
+         */
+        var init = function () {
+
+            // Init the slider element
+
+            slider.append(
+                '<div class="lazyslider-panes">'
+                + '<div class="lazyslider-first-pane lazyslider-pane"></div>'
+                + '<div class="lazyslider-second-pane lazyslider-pane"></div>'
+                + '<div class="lazyslider-caption"><div class="lazyslider-background"></div><div class="lazyslider-description"></div></div>'
+                + '</div>'
+            );
+
+            slider.addClass('lazyslider');
+
+            // Read information on slides
+
+            $('.slide', slider).each(function (index) {
+                var slide = $(this);
+                var link = slide.data('link');
+                slides[index] = {
+                    url: slide.data('src'),
+                    width: slide.data('width'),
+                    height: slide.data('height'),
+                    alt: $.trim(slide.text()),
+                    slide: slide
+                };
+                if (link) {
+                    slides[index].link = link;
+                }
+                total++;
+            });
+        };
+
+        /**
+         * Update the caption with the description of the current slide.
+         */
+        var updateCaption = function () {
+            $('.lazyslider-description', slider).text(slides[currentIndex].alt);
+        };
+
+        /**
+         * Prepare slides for the next animation step and schedule the animation.
+         */
+        var schedule = function () {
+            prepare();
+            setTimeout(animate, settings.animationDelay);
+        };
+
+        /**
+         * Prepares slides for the next animation step.
+         */
+        var prepare = function () {
+
+            $('.lazyslider-first-pane a, .lazyslider-first-pane img', slider).remove();
+            $('.lazyslider-first-pane', slider).append(renderSlide(currentIndex));
+            $('.lazyslider-first-pane', slider).show();
+
+            currentIndex++;
+            if (currentIndex >= total) {
+                currentIndex = 0;
+            }
+
+            $('.lazyslider-second-pane', slider).hide();
+            $('.lazyslider-second-pane a, .lazyslider-second-pane img', slider).remove();
+            $('.lazyslider-second-pane', slider).append(renderSlide(currentIndex));
+        };
+
+        /**
+         * Start the next animation step.
+         */
+        var animate = function () {
+            updateCaption();
+            $('.lazyslider-first-pane', slider).fadeOut({duration: settings.animationSpeed, easing: settings.easingOut});
+            $('.lazyslider-second-pane', slider).fadeIn({duration: settings.animationSpeed, easing: settings.easingIn, complete: schedule});
+        };
+
+        /**
+         * Render a slide.
+         *
+         * @param index Index of the slide to render.
+         *
+         * @returns string Slide HTML.
+         */
+        var renderSlide = function (index) {
+
+            var banner = slides[index];
+
+            var imageHtml = '<img src="'
+                + banner.url
+                + '" width="'
+                + banner.width
+                + '" height="'
+                + banner.height
+                + '" alt="'
+                + banner.alt
+                + '" />';
+
+            return ('link' in banner) ? '<a href="' + banner.link + '">' + imageHtml + '</a>' : imageHtml;
+        };
 
     };
 
-    var prepareStep = function() {
-        $('.slider-first-pane a, .slider-first-pane img', slider).remove();
-        $('.slider-first-pane', slider).append(renderSlide(currentIndex));
-        $('.slider-first-pane', slider).show();
-
-        currentIndex++;
-        if (currentIndex >= total) {
-            currentIndex = 0;
-        }
-
-        $('.slider-second-pane', slider).hide();
-        $('.slider-second-pane a, .slider-second-pane img', slider).remove();
-        $('.slider-second-pane', slider).append(renderSlide(currentIndex));
+    /**
+     * Prototype jQuery and add the lazySlider method.
+     *
+     * @param options Slider settings
+     *
+     * @returns jQuery
+     */
+    $.fn.lazySlider = function(options) {
+        return this.each(function(key, value){
+            var slider = new LazySlider(this, options);
+            slider.run();
+        });
     };
 
-    var updateCaption = function() {
-        $('.slider-caption .slider-description', slider).text(banners[currentIndex].alt);
-    };
-
-    var schedule = function() {
-        prepareStep();
-        setTimeout(animate, settings.animationDelay);
-    };
-
-    var animate = function()
-    {
-        updateCaption();
-        $('.slider-first-pane', slider).fadeOut({duration: settings.animationSpeed, easing: settings.easingOut});
-        $('.slider-second-pane', slider).fadeIn({duration: settings.animationSpeed, easing: settings.easingIn, complete: schedule});
-    };
-
-    updateCaption();
-    schedule();
 });

@@ -1,10 +1,10 @@
-.slider-caption .slider-background
+.lazyslider-caption .lazyslider-background
 {
     background: white;
     opacity: 0.9;
 }
 
-.slider-caption .slider-description
+.lazyslider-caption .lazyslider-description
 {
     z-index: 20;
     color: black;
