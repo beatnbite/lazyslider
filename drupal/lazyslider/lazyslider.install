@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Lazy Slider module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function lazyslider_uninstall() {
+
+  foreach (variable_get('lazyslider_slides', array()) as $slide) {
+    // Check if the slide has a file ID and delete the file
+    if (isset($slide['fid'])) {
+      file_delete(file_load($slide['fid']));
+    }
+  }
+
+  // Delete the folder the slider images were contained in
+  $slides_folder = 'public://slides/';
+  file_unmanaged_delete_recursive($slides_folder);
+
+  // Remove module variables
+  variable_del('lazyslider_slides');
+  variable_del('lazyslider_animation_speed');
+  variable_del('lazyslider_animation_delay');
+  variable_del('lazyslider_caption_speed');
+  variable_del('lazyslider_caption_delay');
+  variable_del('lazyslider_image_style');
+  variable_del('lazyslider_image_style_slide');
+
+}

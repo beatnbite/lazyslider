@@ -1,0 +1,310 @@
+<?php
+
+/**
+ * @file
+ * Primarily Drupal hooks.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function lazyslider_requirements($phase) {
+
+  $requirements = array();
+
+  if ($phase == 'runtime') {
+    // Check if the Lazy Slider jQuery plugin library is installed
+    if (($library = libraries_detect('lazyslider')) && !empty($library['installed'])) {
+      $requirements['lazyslider_library'] = array(
+        'title' => t('Lazy Slider jQuery plugin'),
+        'value' => t('Installed'),
+        'severity' => REQUIREMENT_OK,
+      );
+    }
+    else {
+      $requirements['lazyslider_library'] = array(
+        'title' => t('Lazy Slider jQuery plugin'),
+        'value' => t('Not installed'),
+        'description' => $library['error message'],
+        'severity' => REQUIREMENT_ERROR,
+      );
+    }
+    // Check if the site is running >= jQuery 1.7
+    if (($library = drupal_get_library('system', 'jquery')) && (version_compare($library['version'], '1.7') > 0)) {
+      $requirements['lazyslider_jquery'] = array(
+        'title' => t('Lazy Slider jQuery version'),
+        'value' => t('jQuery @version', array('@version' => $library['version'])),
+        'severity' => REQUIREMENT_OK,
+      );
+    }
+    else {
+      $destination = drupal_get_destination();
+
+      $requirements['lazyslider_jquery'] = array(
+        'title' => t('Lazy Slider jQuery version'),
+        'value' => t('jQuery @version', array('@version' => $library['version'])),
+        'description' => t('Lazy Slider requires jQuery 1.7 or greater. Configure <a href="@jquery_update">jQuery Update</a>.', array('@jquery_update' => url('admin/config/development/jquery_update', array('query' => $destination)))),
+        'severity' => REQUIREMENT_ERROR,
+      );
+    }
+  }
+
+  return $requirements;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function lazyslider_permission() {
+  return array(
+    'administer lazyslider' => array(
+      'title' => t('Administer Lazy Slider'),
+      'description' => t('Allows a user to configure Lazy Slider.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function lazyslider_menu() {
+  $items['admin/structure/lazyslider'] = array(
+    'title' => 'Lazy Slider',
+    'description' => 'Configure slider content and options.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('lazyslider_slide_configuration_form'),
+    'access arguments' => array('administer lazy slider'),
+    'file' => 'lazyslider_slides.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['admin/structure/lazyslider/slides'] = array(
+    'title' => 'Slides',
+    'description' => 'Configure slider content.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('lazyslider_slide_configuration_form'),
+    'access arguments' => array('administer lazy slider'),
+    'file' => 'lazyslider_slides.admin.inc',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => 1,
+  );
+  $items['admin/structure/lazyslider/options'] = array(
+    'title' => 'Options',
+    'description' => 'Configure slider options.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('lazyslider_option_configuration_form'),
+    'access arguments' => array('administer lazy slider'),
+    'file' => 'lazyslider_options.admin.inc',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 2,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_help().
+ */
+function lazyslider_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#lazyslider':
+      $output = '';
+      $output .= '<p>' . t('<a href="@project_page">Lazy Slider</a> provides an easy and eye-catching way to showcase featured content.', array('@project_page' => 'https://github.com/beatnbite/lazyslider')) . '</p>';
+      $output .= '<h2>' . t('Usage') . '</h2>';
+      $output .= '<p>' . t('Lazy Slider provides a block which will determine where the slider is placed. Administrators or users with the Administer Lazy Slider permission will be able to configure slider settings by visiting the <a href="lazyslider">Lazy Slider</a> administration page.', array('@lazyslider' => url('admin/structure/lazyslider'))) . '</p>';
+      $output .= '<h2>' . t('Configuration') . '</h2>';
+      $output .= '<p>' . t('Lazy Slider provides two configuration pages: slides and options.') . '</p>';
+      $output .= '<h3>' . t('Slides') . '</h3>';
+      $output .= '<p>' . t('The <a href="@slides">slides</a> page provides an interface for managing the content of the slider. Slider content can be given a title or description, made into a link, reordered or restricted to displaying on a specific path.', array('@slides' => url('admin/structure/lazyslider'))) . '</p>';
+      $output .= '<h3>' . t('Options') . '</h3>';
+      $output .= '<p>' . t('The <a href="@options">options</a> page provides an interface for configuring the slider. Slider options include general options, transitions and navigation.', array('@options' => url('admin/structure/lazyslider/options'))) . '</p>';
+      return $output;
+    case 'admin/structure/lazyslider':
+      $output = '';
+      $output .= '<p>' . t('Configure slider content.') . '</p>';
+      return $output;
+    case 'admin/structure/lazyslider/slides':
+      $output = '';
+      $output .= '<p>' . t('Configure slider content.') . '</p>';
+      return $output;
+    case 'admin/structure/lazyslider/options':
+      $output = '';
+      $output .= '<p>' . t('Configure slider options.') . '</p>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_contextual_links_view_alter().
+ */
+function lazyslider_contextual_links_view_alter(&$element, &$items) {
+  if (isset($element['#element']['#block']) && $element['#element']['#block']->delta == 'lazyslider') {
+    $element['#links']['slides'] = array(
+      'title' => t('Configure slider slides'),
+      'href' => 'admin/structure/lazyslider/slides',
+    );
+    $element['#links']['options'] = array(
+      'title' => t('Configure slider options'),
+      'href' => 'admin/structure/lazyslider/options',
+    );
+  }
+}
+
+/**
+ * Implements hook_i18n_string_info()
+ */
+function lazyslider_i18n_string_info() {
+  $groups['lazyslider'] = array(
+    'title' => t('Lazy Slider'),
+    'description' => t('Slide titles and descriptions.'),
+    'format' => TRUE,
+    'list' => FALSE,
+    'refresh callback' => 'lazyslider_locale_refresh',
+  );
+
+  return $groups;
+}
+
+/**
+ * Update / create translation source for user defined slide strings.
+ *
+ * @param $slides
+ *   An array of slider slides.
+ */
+function lazyslider_locale_refresh($slides = NULL) {
+    if (!isset($slides)) {
+        $slides = variable_get('lazyslider_slides', array());
+    }
+    foreach ($slides as $slide => $settings) {
+        foreach ($settings as $setting => $value) {
+            switch ($setting) {
+                case 'title':
+                    i18n_string_update('lazyslider:slide:' . $slide . ':title', $value);
+                    break;
+            }
+        }
+    }
+}
+
+/**
+ * Translates a user defined slide string.
+ * 
+ * @param $name
+ *   Location glued with ':'.
+ * @param $string
+ *   String in default language. Default language may or may not be English.
+ * @param $langcode
+ *  The language code if it is different from the page request one.
+ * @param $textgroup
+ *  Textgroup.
+ * 
+ * @return $string
+ *   Translated string, $string if not found.
+ */
+function lazyslider_translate($name, $string, $langcode = NULL, $textgroup = 'lazyslider') {
+  return function_exists('i18n_string') ? i18n_string($textgroup . ':' . $name, $string, array('langcode' => $langcode)) : $string;  
+}
+
+/**
+ * Implements hook_theme().
+ */
+function lazyslider_theme($existing, $type, $theme, $path) {
+  return array(
+    'lazyslider_slide_configuration_form' => array(
+      'render element' => 'form',
+      'file' => 'lazyslider.theme.inc',
+      'path' => $path,
+    ),
+    'lazyslider_wrapper' => array(
+      'variables' => array(
+        'theme' => NULL,
+        'slides' => NULL,
+      ),
+      'file' => 'lazyslider.theme.inc',
+      'path' => $path,
+      'template' => 'lazyslider-wrapper',
+    ),
+  );
+}
+
+/**
+ * Implements hook_libraries_info().
+ */
+function lazyslider_libraries_info() {
+  $libraries['lazyslider'] = array(
+    'name' => 'Lazy Slider',
+    'vendor url' => 'https://github.com/beatnbite',
+    'download url' => 'https://github.com/beatnbite/lazyslider',
+    'version arguments' => array(
+      'file' => 'lazyslider.pack.js',
+      'pattern' => '/Lazy Slider v(\d+\.+\d+)/',
+      'lines' => 2,
+    ),
+    'files' => array(
+      'js' => array(
+        'lazyslider.pack.js',
+      ),
+      'css' => array(
+        'lazyslider.css',
+      ),
+    ),
+  );
+
+  return $libraries;
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function lazyslider_block_info() {
+  $blocks['lazyslider'] = array(
+    'info' => t('Lazy Slider'),
+    'cache' => DRUPAL_CACHE_PER_PAGE,
+    'status' => 1,
+    'region' => 'header',
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function lazyslider_block_view($delta = '') {
+
+  switch ($delta) {
+
+    case 'lazyslider':
+
+      $block['content'] = array(
+        '#type' => 'markup',
+        '#theme' => 'lazyslider_wrapper',
+        '#attached' => array(
+          'libraries_load' => array(
+            array('lazyslider'),
+          ),
+          'js' => array(
+            array(
+              'data' => drupal_get_path('module', 'lazyslider') . '/js/lazyslider.js',
+              'type' => 'file',
+            ),
+            array(
+              'data' => array(
+                'lazyslider' => array(
+                  'animation_speed' => check_plain(variable_get('lazyslider_animation_speed', '700')),
+                  'animation_delay' => check_plain(variable_get('lazyslider_animation_delay', '5000')),
+                  'caption_speed'   => check_plain(variable_get('lazyslider_caption_speed', '250')),
+                  'caption_delay'   => check_plain(variable_get('lazyslider_caption_delay', '700')),
+                ),
+              ),
+              'type' => 'setting',
+            ),
+          ),
+          'css' => array(),
+        ),
+      );
+
+      break;
+  }
+
+  return $block;
+}
