@@ -86,19 +86,13 @@
             var panes = $('.lazyslider-panes', slider);
 
             panes.hover(function () {
-
                 clearTimeout(panes.t);
                 caption.stop().animate({bottom: 0}, settings.captionAnimationSpeed);
-
             }, function () {
-
                 panes.t = setTimeout((function () {
                     var height = $('.lazyslider-description', caption).outerHeight();
-                    caption.stop().animate({
-                        bottom: "-" + height + "px"
-                    }, settings.captionAnimationSpeed)
+                    caption.stop().animate({bottom: -height}, settings.captionAnimationSpeed);
                 }), settings.captionAnimationDelay);
-
             });
 
             // Update the caption with the first slide description

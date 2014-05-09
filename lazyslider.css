@@ -9,6 +9,21 @@
  * Please refer to LICENSE file for details.
  */
 
+.lazyslider .slides
+{
+    display: none;
+}
+
+.lazyslider-panes
+{
+    overflow: hidden;
+    position: relative;
+    float: left;
+    -webkit-box-shadow: 0px 1px 5px 0px #aaa;
+    -moz-box-shadow: 0px 1px 5px 0px #aaa;
+    box-shadow: 0px 1px 5px 0px #aaa;
+}
+
 .lazyslider:after
 {
     content: ".";
@@ -18,16 +33,10 @@
     visibility: hidden;
 }
 
-.slides
+.lazyslider-pane img,
+.lazyslider-pane a
 {
-    display: none;
-}
-
-.lazyslider-panes
-{
-    position: relative;
-    float: left;
-    overflow: hidden;
+    display: block;
 }
 
 .lazyslider-second-pane
@@ -43,6 +52,7 @@
     left: 0;
     bottom: -5em;
     width: 100%;
+    line-height: 1;
 }
 
 .lazyslider-background,
@@ -59,9 +69,12 @@
 {
     z-index: 10;
     width: 100%;
+    background-color: white;
+    opacity: 0.95;
 }
 
 .lazyslider-description
 {
     z-index: 20;
+    color: black;
 }

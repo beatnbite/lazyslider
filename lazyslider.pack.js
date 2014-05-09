@@ -1,0 +1,12 @@
+/*
+ * Lazy Slider v0.1
+ * https://github.com/beatnbite/lazyslider
+ *
+ * Copyright 2014, Vyacheslav Petrov
+ *
+ * Free for non-commercial use.
+ * A license fee is required for commercial use.
+ * Please refer to LICENSE file for details.
+ */
+
+!function(i){var a=function(a,n){var e={animationSpeed:700,animationDelay:5e3,easingOut:"swing",easingIn:"swing",captionAnimationSpeed:250,captionAnimationDelay:600};i.extend(e,n);var t=i(a),s=[],d=0,l=0;this.run=function(){r();var a=i(".lazyslider-caption",t),n=i(".lazyslider-panes",t);n.hover(function(){clearTimeout(n.t),a.stop().animate({bottom:0},e.captionAnimationSpeed)},function(){n.t=setTimeout(function(){var n=i(".lazyslider-description",a).outerHeight();a.stop().animate({bottom:-n},e.captionAnimationSpeed)},e.captionAnimationDelay)}),o(),c()};var r=function(){t.append('<div class="lazyslider-panes"><div class="lazyslider-first-pane lazyslider-pane"></div><div class="lazyslider-second-pane lazyslider-pane"></div><div class="lazyslider-caption"><div class="lazyslider-background"></div><div class="lazyslider-description"></div></div></div>'),t.addClass("lazyslider"),i(".slide",t).each(function(a){var n=i(this),e=n.data("link");s[a]={url:n.data("src"),width:n.data("width"),height:n.data("height"),alt:i.trim(n.text()),slide:n},e&&(s[a].link=e),d++})},o=function(){i(".lazyslider-description",t).text(s[l].alt)},c=function(){p(),setTimeout(u,e.animationDelay)},p=function(){i(".lazyslider-first-pane a, .lazyslider-first-pane img",t).remove(),i(".lazyslider-first-pane",t).append(y(l)),i(".lazyslider-first-pane",t).show(),l++,d>l||(l=0),i(".lazyslider-second-pane",t).hide(),i(".lazyslider-second-pane a, .lazyslider-second-pane img",t).remove(),i(".lazyslider-second-pane",t).append(y(l))},u=function(){o(),i(".lazyslider-first-pane",t).fadeOut({duration:e.animationSpeed,easing:e.easingOut}),i(".lazyslider-second-pane",t).fadeIn({duration:e.animationSpeed,easing:e.easingIn,complete:c})},y=function(i){var a=s[i],n='<img src="'+a.url+'" width="'+a.width+'" height="'+a.height+'" alt="'+a.alt+'" />';return"link"in a?'<a href="'+a.link+'">'+n+"</a>":n}};i.fn.lazySlider=function(i){return this.each(function(){var n=new a(this,i);n.run()})}}(jQuery);
