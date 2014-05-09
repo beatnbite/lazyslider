@@ -9,7 +9,7 @@
  * Please refer to LICENSE file for details.
  */
 
-jQuery(document).ready(function($) {
+(function($) {
 
     /**
      * Instantiates and runs the lazy slider on the element matching the specified selector.
@@ -229,4 +229,4 @@ jQuery(document).ready(function($) {
         });
     };
 
-});
+})(jQuery);
