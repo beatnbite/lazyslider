@@ -1,9 +1,19 @@
 CONTENTS
 --------
 
+ * About
  * Requirements
  * Installation
  * Permissions
+
+ABOUT
+-----
+
+This module is based on the code of the module integrating Drupal 7 with Nivo
+Slider jQuery plug-in (https://drupal.org/project/nivo_slider).
+
+I haven't found any copyright notices in the original source code, that's why
+this notice is here.
 
 REQUIREMENTS
 ------------
