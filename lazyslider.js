@@ -32,7 +32,8 @@
             easingOut: 'swing',
             easingIn: 'swing',
             captionAnimationSpeed: 250,
-            captionAnimationDelay: 600
+            captionAnimationDelay: 600,
+            randomStart: true
         };
         $.extend(settings, options);
 
@@ -138,6 +139,10 @@
                 }
                 total++;
             });
+
+            if (settings.randomStart) {
+                currentIndex = Math.floor(Math.random() * total)
+            }
         };
 
         /**
